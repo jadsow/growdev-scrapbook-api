@@ -42,7 +42,7 @@ app.post('/listar-recado', (request: Request, response: Response) => {
 
     listaDeRecados.push(recados)
     return response.status(200).json({
-        mensagem: 'Recado cadastrado'
+        mensagem: 'Recado foi registrado'
     })
 
 })
