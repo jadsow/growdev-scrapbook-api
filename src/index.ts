@@ -1,5 +1,6 @@
 import express, {Request, Response} from 'express';
 import cors from 'cors';
+import { request } from 'http';
 
 const app = express();
 
@@ -10,35 +11,41 @@ app.use(cors());
 const cadastroPessoas: any = [];
 
 app.get('/listar-usuarios', (request: Request, response: Response) => {
-    const {listaUsuarios} = request.query;
-
     return response.json(cadastroPessoas)
+})
+
+app.get('/listar-recados', (request:Request, response: Response) => {
+    return response.json(listaDeRecados)
 })
 
 app.post('/cadastro', (request: Request, response: Response) => {
     const {nome, senha} = request.body;
-    const pessoa = {
-        nome,
-        senha,
-    }
-    
+    const pessoa = 
+        {
+            nome,
+            senha,
+        }
+       
     cadastroPessoas.push(pessoa);
-
     return response.status(201).json(pessoa)
 })
 
-function usuarioExiste (request: Request, response: Response, next: any) {
-    const consulta = cadastroPessoas.find((f:any) => f.nome);
+const listaDeRecados: any = []
 
-    if (request.body.nome === consulta.nome){
-        console.log('nome existente, escolha outro');
-        next()
-    } else {
-        console.log('usuário não registrado');
-        next()
+app.post('/listar-recado', (request: Request, response: Response) => {
+    const {prioridade, recado} = request.body
+
+    const recados = {
+        prioridade,
+        recado,
     }
-}
 
+    listaDeRecados.push(recados)
+    return response.status(200).json({
+        mensagem: 'Recado cadastrado'
+    })
+
+})
 
 
 app.listen(8080, () => console.log('Api em funcionamento...'))
