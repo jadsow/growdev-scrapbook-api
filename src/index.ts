@@ -21,6 +21,7 @@ app.post('/cadastro', (request: Request, response: Response) => {
         nome,
         senha,
     }
+    
     cadastroPessoas.push(pessoa);
 
     return response.status(201).json(pessoa)
