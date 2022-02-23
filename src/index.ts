@@ -3,6 +3,7 @@ import cors from 'cors';
 import Usuario from './usuarios'
 import Recados from './recados'
 import { request } from 'http';
+import { json } from 'stream/consumers';
 
 const app = express();
 
@@ -10,16 +11,14 @@ app.use(express.json());
 app.use(express.urlencoded({extended: false}));
 app.use(cors());
 
-//Listar usuários e IDs
+//Listar usuários e IDs (sem a senha)
 app.get('/listar-usuarios-id', (request: Request, response: Response) => {
-    const nomeDosUsuarios = []
-
-    for (let nomeUsuarios of cadastroPessoas){
-        nomeDosUsuarios.push(nomeUsuarios.nome)
-        nomeDosUsuarios.push(nomeUsuarios.id)
-    }
-
-    return response.status(200).json(nomeDosUsuarios)
+    return response.json(cadastroPessoas.map(usuarios => {
+        return {
+            nome: usuarios.nome,
+            id: usuarios.id
+        }
+    }))
 })
 
 //Listar um usuário pelo ID
@@ -60,6 +59,22 @@ app.post('/cadastro', (request: Request, response: Response) => {
     })
 })
 
+//Deletar usuário pelo ID
+app.delete ('/deletar-usuario/:id', (request: Request, response: Response) => {
+    const {id} = request.params
+    const buscarIndexUsuario = cadastroPessoas.findIndex((search) => search.id === parseInt(id))
 
+    if (buscarIndexUsuario < 0){
+        return response.json({
+            mensagem: 'Usuário não encontrado'
+        })
+    } 
+    
+    cadastroPessoas.splice(buscarIndexUsuario, 1)
+
+    return response.sendStatus(204)
+    
+
+})
 
 app.listen(8080, () => console.log('Api em funcionamento...'))
