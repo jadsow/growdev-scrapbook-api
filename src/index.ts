@@ -1,7 +1,7 @@
 import express, {Request, response, Response} from 'express';
 import cors from 'cors';
 import Usuario from './usuarios'
-import Recados from './recados'
+import Recado from './recados'
 import { request } from 'http';
 import { json } from 'stream/consumers';
 
@@ -75,6 +75,24 @@ app.delete ('/deletar-usuario/:id', (request: Request, response: Response) => {
     return response.sendStatus(204)
     
 
+})
+
+//Adicionar recados
+app.post ('/cadastro/:id/adicionar-recados', (request: Request, response: Response) => {
+    const {id} = request.params;
+    const {prioridade, recado} = request.body
+    const idUsuario = cadastroPessoas.findIndex((iduser) => iduser.id === parseInt(id))
+    
+    if (idUsuario < 0){
+        return response.status(404).json({
+            mensagem: 'Usuário inválido'
+        })
+    }
+
+    const recadoUsuario = new Recado (prioridade, recado);
+    cadastroPessoas[idUsuario].recados.push(recadoUsuario)
+    
+    return response.json(recadoUsuario)
 })
 
 app.listen(8080, () => console.log('Api em funcionamento...'))
