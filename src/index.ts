@@ -4,6 +4,7 @@ import Usuario from './usuarios'
 import Recado from './recados'
 import { request } from 'http';
 import { json } from 'stream/consumers';
+import { nextTick } from 'process';
 
 const app = express();
 
@@ -80,9 +81,10 @@ function buscarLoginESenha (request: Request, response: Response, next: NextFunc
     if (usuario) {
         const pw = usuario.senha === senha;
         if (pw){
-            return response.status(200).json({
+                response.status(200).json({
                 mensagem: 'Usuário encontrado e logado'
             })
+            next()
         } else {
             return response.status(404).json({
                 mensagem: 'Password incorreto'
@@ -92,6 +94,7 @@ function buscarLoginESenha (request: Request, response: Response, next: NextFunc
         return response.status(404).json({
             mensagem: 'Usuário não encontrado'
         })
+        
     }
 }
 
@@ -123,6 +126,30 @@ function buscarUsuarioId (request: any, response: Response, next: NextFunction) 
 }
 
 //Editar recados
+app.put ('/lista-recados/:nome/:senha/:idRecado', (request: Request, response: Response) => {
+    const {nome, senha, idRecado} = request.params;
+
+    const usuario = cadastroPessoas.find(name => name.nome === nome)
+
+    if (usuario) {
+
+        const pw = usuario.senha === senha;
+        if (pw){            
+            const buscaRecado = usuario.recados.find(recado => recado.id === parseInt(idRecado))
+            if (buscaRecado) {
+                return response.status(200).json(buscaRecado)
+            }
+        } else {
+            return response.status(404).json({
+                mensagem: 'Password incorreto'
+            })
+        }
+        } else {
+            return response.status(404).json({
+                mensagem: 'Usuário não encontrado'
+            })
+        }
+})
 
 //Deletar recados
 app.delete('/cadastro/:id/remover-recados/:idRecado', (request: Request, response: Response) => {
