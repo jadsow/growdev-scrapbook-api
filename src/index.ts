@@ -21,7 +21,7 @@ app.get('/listar-usuarios-id', (request: Request, response: Response) => {
     }))
 })
 
-//Listar um usuário pelo ID
+//Listar um usuário pelo ID (com seus recados)
 app.get('/buscar-usuario/:id', buscarUsuario, (request: any, response: Response) => {
 
     return response.json(request.usuario)
@@ -36,14 +36,19 @@ function buscarUsuario (request: any, response: Response, next: NextFunction) {
             mensagem: 'Usuário não encontrado com este ID'
         })
     }
-
     request.usuario = usuario
     next()
 }
 
 //Cadastrar usuários
 const cadastroPessoas: Usuario[] = [];
-app.post('/cadastro', (request: Request, response: Response) => {
+app.post('/cadastro', verificacaoUsuario, (request: Request, response: Response) => {
+    return response.status(201).json({
+        mensagem: 'Cadastrado com sucesso'
+    })
+})
+
+function verificacaoUsuario (request: any, response: Response, next: NextFunction) {
     const {nome, senha} = request.body;
     const usuario = new Usuario (nome, senha);
 
@@ -60,46 +65,61 @@ app.post('/cadastro', (request: Request, response: Response) => {
     }
 
     cadastroPessoas.push(usuario);
+    next()
+}
 
-    return response.status(201).json({
-        mensagem: 'Cadastrado com sucesso'
-    })
-})
-
-//Deletar usuário pelo ID
-app.delete ('/deletar-usuario/:id', (request: Request, response: Response) => {
-    const {id} = request.params
-    const buscarIndexUsuario = cadastroPessoas.findIndex((search) => search.id === parseInt(id))
-
-    if (buscarIndexUsuario < 0){
-        return response.json({
-            mensagem: 'Usuário não encontrado'
-        })
-    } 
-    
-    cadastroPessoas.splice(buscarIndexUsuario, 1)
-
-    return response.sendStatus(204)
-    
-
-})
+//Logar
 
 //Adicionar recados
-app.post ('/cadastro/:id/adicionar-recados', (request: Request, response: Response) => {
+app.post ('/cadastro/:id/adicionar-recados', buscarUsuarioId, (request: Request, response: Response) => {
     const {id} = request.params;
     const {prioridade, recado} = request.body
     const idUsuario = cadastroPessoas.findIndex((iduser) => iduser.id === parseInt(id))
-    
-    if (idUsuario < 0){
-        return response.status(404).json({
-            mensagem: 'Usuário inválido'
-        })
-    }
 
     const recadoUsuario = new Recado (prioridade, recado);
     cadastroPessoas[idUsuario].recados.push(recadoUsuario)
-    
-    return response.json(recadoUsuario)
+
+    return response.json({
+        mensagem: 'Recado Adicionado'
+    })
+})
+
+function buscarUsuarioId (request: any, response: Response, next: NextFunction) {
+    const {id} = request.params;
+    const idUsuario = cadastroPessoas.findIndex((iduser) => iduser.id === parseInt(id))
+
+        if (idUsuario < 0){
+            return response.status(404).json({
+                mensagem: 'Usuário inválido'
+            })
+        }
+
+    next()
+}
+
+//Deletar recados
+app.delete('/cadastro/:id/remover-recados/:idRecado', (request: Request, response: Response) => {
+    const {id, idRecado} = request.params;
+    const idUsuario = cadastroPessoas.findIndex((iduser) => iduser.id === parseInt(id))
+
+    if (idUsuario < 0) {
+        return response.status(404).json({
+            mensagem: 'Usuário não encontrado'
+        })
+    }
+
+    const indexRecado = cadastroPessoas[idUsuario].recados.findIndex(recado => recado.id === parseInt(idRecado));
+
+    if (indexRecado < 0) {
+        return response.status(404).json({
+            mensagem: 'Não existe recado com este id'
+        })
+    }
+
+    cadastroPessoas[idUsuario].recados.splice(indexRecado, 1)
+
+    return response.sendStatus(204)
+
 })
 
 app.listen(8080, () => console.log('Api em funcionamento...'))
