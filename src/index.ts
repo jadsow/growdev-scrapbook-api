@@ -69,6 +69,31 @@ function verificacaoUsuario (request: any, response: Response, next: NextFunctio
 }
 
 //Logar
+app.get('/logar/:nome/:senha', buscarLoginESenha, (request: Request, response: Response) => {
+    return response
+})
+
+function buscarLoginESenha (request: Request, response: Response, next: NextFunction) {
+    const {nome, senha} = request.params;
+    const usuario = cadastroPessoas.find(name => name.nome === nome)
+
+    if (usuario) {
+        const pw = usuario.senha === senha;
+        if (pw){
+            return response.status(200).json({
+                mensagem: 'Usuário encontrado e logado'
+            })
+        } else {
+            return response.status(404).json({
+                mensagem: 'Password incorreto'
+            })
+        }
+    } else {
+        return response.status(404).json({
+            mensagem: 'Usuário não encontrado'
+        })
+    }
+}
 
 //Adicionar recados
 app.post ('/cadastro/:id/adicionar-recados', buscarUsuarioId, (request: Request, response: Response) => {
@@ -96,6 +121,8 @@ function buscarUsuarioId (request: any, response: Response, next: NextFunction) 
 
     next()
 }
+
+//Editar recados
 
 //Deletar recados
 app.delete('/cadastro/:id/remover-recados/:idRecado', (request: Request, response: Response) => {
