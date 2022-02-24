@@ -1,4 +1,4 @@
-import express, {Request, response, Response} from 'express';
+import express, {Request, Response, NextFunction} from 'express';
 import cors from 'cors';
 import Usuario from './usuarios'
 import Recado from './recados'
@@ -22,17 +22,24 @@ app.get('/listar-usuarios-id', (request: Request, response: Response) => {
 })
 
 //Listar um usuário pelo ID
-app.get('/buscar-usuario/:id', (request: Request, response: Response) => {
-    const {id} = request.params;
-    const buscarUsuario = cadastroPessoas.find((search) => search.id === parseInt(id))
+app.get('/buscar-usuario/:id', buscarUsuario, (request: any, response: Response) => {
 
-    if (!buscarUsuario) {
+    return response.json(request.usuario)
+})
+
+function buscarUsuario (request: any, response: Response, next: NextFunction) {
+    const {id} = request.params;
+    const usuario = cadastroPessoas.find((search) => search.id === parseInt(id))
+
+    if (!usuario) {
         return response.status(404).json({
             mensagem: 'Usuário não encontrado com este ID'
         })
     }
-    return response.status(200).json(buscarUsuario)
-})
+
+    request.usuario = usuario
+    next()
+}
 
 //Cadastrar usuários
 const cadastroPessoas: Usuario[] = [];
