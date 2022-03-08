@@ -71,7 +71,7 @@ function verificacaoUsuario (request: any, response: Response, next: NextFunctio
 
 //Logar
 app.post('/logar', (request: Request, response: Response) => {
-    const {nome, senha} = request.params;
+    const {nome, senha} = request.body;
     const usuario = cadastroPessoas.find(name => name.nome === nome)
 
     if (usuario) {
@@ -91,8 +91,7 @@ app.post('/logar', (request: Request, response: Response) => {
         })
         
     }
-    return response.status(200)
-
+    return response.sendStatus(200);
 })
 
 //Adicionar recados
