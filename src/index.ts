@@ -176,4 +176,4 @@ app.delete('/cadastro/:id/remover-recados/:idRecado', (request: Request, respons
 
 })
 
-app.listen(8080, () => console.log('Api em funcionamento...'))
+app.listen(process.env.PORT || 8080, () => console.log('Api em funcionamento...'))
