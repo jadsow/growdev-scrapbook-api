@@ -70,11 +70,7 @@ function verificacaoUsuario (request: any, response: Response, next: NextFunctio
 }
 
 //Logar
-app.get('/logar/:nome/:senha', buscarLoginESenha, (request: Request, response: Response) => {
-    return response.status(200)
-})
-
-function buscarLoginESenha (request: Request, response: Response, next: NextFunction) {
+app.post('/logar', (request: Request, response: Response) => {
     const {nome, senha} = request.params;
     const usuario = cadastroPessoas.find(name => name.nome === nome)
 
@@ -84,7 +80,6 @@ function buscarLoginESenha (request: Request, response: Response, next: NextFunc
                 response.status(200).json({
                 mensagem: 'Usuário encontrado e logado'
             })
-            next()
         } else {
             return response.status(404).json({
                 mensagem: 'Password incorreto'
@@ -96,7 +91,9 @@ function buscarLoginESenha (request: Request, response: Response, next: NextFunc
         })
         
     }
-}
+    return response.status(200)
+
+})
 
 //Adicionar recados
 app.post ('/cadastro/:id/adicionar-recados', buscarUsuarioId, (request: Request, response: Response) => {
