@@ -71,7 +71,7 @@ function verificacaoUsuario (request: any, response: Response, next: NextFunctio
 
 //Logar
 app.get('/logar/:nome/:senha', buscarLoginESenha, (request: Request, response: Response) => {
-    return response
+    return response.status(200)
 })
 
 function buscarLoginESenha (request: Request, response: Response, next: NextFunction) {
