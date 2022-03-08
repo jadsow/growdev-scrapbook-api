@@ -43,13 +43,7 @@ function buscarUsuario (request: any, response: Response, next: NextFunction) {
 
 //Cadastrar usuários
 const cadastroPessoas: Usuario[] = [];
-app.post('/cadastro', verificacaoUsuario, (request: Request, response: Response) => {
-    return response.status(201).json({
-        mensagem: 'Cadastrado com sucesso'
-    })
-})
-
-function verificacaoUsuario (request: any, response: Response, next: NextFunction) {
+app.post('/cadastro', (request: Request, response: Response) => {
     const {nome, senha} = request.body;
     const usuario = new Usuario (nome, senha);
 
@@ -66,8 +60,12 @@ function verificacaoUsuario (request: any, response: Response, next: NextFunctio
     }
 
     cadastroPessoas.push(usuario);
-    next()
-}
+
+    return response.status(201).json({
+        mensagem: 'Cadastrado com sucesso'
+    })
+})
+
 
 //Logar
 app.post('/logar', (request: Request, response: Response) => {
