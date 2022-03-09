@@ -94,7 +94,7 @@ app.post ('/cadastro/:id/adicionar-recados', buscarUsuarioId, (request: Request,
     const recadoUsuario = new Recado (prioridade, recado);
     cadastroPessoas[idUsuario].recados.push(recadoUsuario)
 
-    return response.status(200).json({
+    return response.status(201).json({
         mensagem: 'Recado Adicionado'
     })
 })
