@@ -48,7 +48,7 @@ app.post('/cadastro', (request: Request, response: Response) => {
     const usuario = new Usuario (nome, senha);
 
     if (cadastroPessoas.find(pessoa => pessoa.nome === nome)){
-        return response.status(400).json({
+        return response.json({
             mensagem: 'Usuário já cadastrado'
         })
     }
