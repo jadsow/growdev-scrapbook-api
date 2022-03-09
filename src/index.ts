@@ -68,9 +68,7 @@ app.post('/logar', (request: Request, response: Response) => {
     if (usuario) {
         const pw = usuario.senha === senha;
         if (pw){
-                response.status(200).json({
-                mensagem: 'Usuário encontrado e logado'
-            })
+                response.status(200).json(usuario)
         } else {
             return response.status(404).json({
                 mensagem: 'Password incorreto'
