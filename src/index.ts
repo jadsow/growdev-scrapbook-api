@@ -100,7 +100,7 @@ app.post ('/cadastro/:id/adicionar-recados', buscarUsuarioId, (request: Request,
 function buscarUsuarioId (request: any, response: Response, next: NextFunction) {
     const {id} = request.params;
     const idUsuario = cadastroPessoas.findIndex((iduser) => iduser.id === parseInt(id))
-
+    
         if (idUsuario < 0){
             return response.status(404).json({
                 mensagem: 'Usuário inválido'
@@ -112,9 +112,10 @@ function buscarUsuarioId (request: any, response: Response, next: NextFunction) 
 
 //Listar recados
 app.get ('/listar-recados/:id', buscarUsuarioId, (request: Request, response: Response) => {
-    return response.json ({
-        mensagem: 'id encontrado'
-    })
+    const {id} = request.params;
+    const idUsuario = cadastroPessoas.find((iduser) => iduser.id === parseInt(id))
+
+    return response.json(idUsuario?.recados)
 })
 
 //Editar recados
