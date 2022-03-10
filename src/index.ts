@@ -115,7 +115,9 @@ app.get ('/listar-recados/:id', buscarUsuarioId, (request: Request, response: Re
     const {id} = request.params;
     const idUsuario = cadastroPessoas.find((iduser) => iduser.id === parseInt(id))
 
-    return response.json(idUsuario?.recados)
+    if (idUsuario) {
+        return response.json(idUsuario?.recados)
+    }
 })
 
 //Editar recados
