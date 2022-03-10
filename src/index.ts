@@ -5,6 +5,7 @@ import Recado from './recados'
 import { request } from 'http';
 import { json } from 'stream/consumers';
 import { nextTick } from 'process';
+import { userInfo } from 'os';
 
 const app = express();
 
@@ -46,7 +47,6 @@ const cadastroPessoas: Usuario[] = [];
 app.post('/cadastro', (request: Request, response: Response) => {
     const {nome, senha} = request.body;
     const usuario = new Usuario (nome, senha);
-
     if (cadastroPessoas.find(pessoa => pessoa.nome === nome)){
         return response.json({
             mensagem: 'Usuário já cadastrado'
@@ -122,7 +122,8 @@ app.get ('/listar-recados/:id', buscarUsuarioId, (request: Request, response: Re
 
 //Editar recados
 app.put ('/lista-recados/:nome/:senha/:idRecado', (request: Request, response: Response) => {
-    const {nome, senha, idRecado} = request.params;
+    const {idRecado} = request.params;
+    const {nome, senha} = request.body
 
     const usuario = cadastroPessoas.find(name => name.nome === nome)
 
@@ -144,6 +145,24 @@ app.put ('/lista-recados/:nome/:senha/:idRecado', (request: Request, response: R
                 mensagem: 'Usuário não encontrado'
             })
         }
+})
+
+//Editar recados
+app.put ('/recados/:id/alterar-recados/:idRecado', (request: Request, response: Response) => {
+    const {id, idRecado} = request.params;
+    const {recado, prioridade} = request.body;
+    const usuario = cadastroPessoas.findIndex((iduser) => iduser.id === parseInt(id))
+    const item = cadastroPessoas[usuario].recados.find(recado => recado.id === parseInt(idRecado))
+
+    if (item) {
+        item.prioridade = prioridade;
+        item.recado = recado;
+    }
+
+    const showuser = cadastroPessoas.find((iduser) => iduser.id === parseInt(id))
+    return response.status(200).json({
+        msg: 'Sucesso', showuser
+    })
 })
 
 //Deletar recados

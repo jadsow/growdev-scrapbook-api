@@ -4,5 +4,4 @@ export default class Recado {
                  public recado: string) {
             this.id = Math.floor(Math.random() * 100);
                  }
-
 }
