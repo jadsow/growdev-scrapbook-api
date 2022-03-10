@@ -110,6 +110,13 @@ function buscarUsuarioId (request: any, response: Response, next: NextFunction) 
     next()
 }
 
+//Listar recados
+app.get ('/listar-recados/:id', buscarUsuarioId, (request: Request, response: Response) => {
+    return response.json ({
+        mensagem: 'id encontrado'
+    })
+})
+
 //Editar recados
 app.put ('/lista-recados/:nome/:senha/:idRecado', (request: Request, response: Response) => {
     const {nome, senha, idRecado} = request.params;
